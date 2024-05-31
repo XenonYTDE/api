@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000; // Use the PORT environment variable if available
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -43,6 +43,13 @@ async function init() {
         await writeData({ messages: [] }); // Initialize file with an empty structure
     }
 }
+
+// Middleware to log the real IP address of each request
+app.use((req, res, next) => {
+    const realIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log(`Incoming request from IP: ${realIp}`);
+    next();
+});
 
 // Get all messages
 app.get('/api/messages', async (req, res) => {
@@ -93,7 +100,7 @@ app.delete('/api/messages/:id', async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-    console.log(`Chat app listening at http://localhost:${port}`);
+    console.log(`Chat app listening on port ${port}`);
 });
 
 // Initialize the data file
