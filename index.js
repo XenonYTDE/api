@@ -44,10 +44,10 @@ async function init() {
     }
 }
 
-// Middleware to log the real IP address of each request
+// Middleware to log the real IP address and the server port of each request
 app.use((req, res, next) => {
     const realIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log(`Incoming request from IP: ${realIp}`);
+    console.log(`Incoming request from IP: ${realIp} on port ${port}`);
     next();
 });
 
